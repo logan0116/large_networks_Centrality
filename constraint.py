@@ -2,15 +2,14 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2022/12/8 上午9:27
 # @Author  : liu yuhan
-# @FileName: sh_effect.py
+# @FileName: effect.py
 # @Software: PyCharm
 
 import numpy as np
 import networkx as nx
 import multiprocessing as mp
+from collections import defaultdict
 from tqdm import tqdm
-
-from utils import *
 
 
 def constraint_single(p):
@@ -51,6 +50,17 @@ def constraint_single(p):
     return i, constraint
 
 
+def get_neighbor(link_list):
+    """
+    :return:
+    """
+    node2neighbor = defaultdict(dict)
+    for s, t in link_list:
+        node2neighbor[s][t] = 1
+        node2neighbor[t][s] = 1
+    return node2neighbor
+
+
 def constraint_mp(label, link_list):
     inst_graph = nx.Graph()
     inst_graph.add_edges_from(link_list)
@@ -73,11 +83,3 @@ def constraint_mp(label, link_list):
         constraint.extend(constraint_)
     print(label, 'finish', len(constraint))
     return dict(constraint)
-
-
-if __name__ == '__main__':
-    for label in ['tech', 'industry', 'all']:
-        link_list = get_network(label=label)
-        effect = constraint_mp(label, link_list)
-        with open('../data/output/constraint_%s_1209.json' % label, 'w', encoding='UTF-8') as f:
-            json.dump(effect, f)

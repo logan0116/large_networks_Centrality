@@ -8,10 +8,9 @@
 
 import multiprocessing as mp
 from functools import partial
-from utils import *
-import time
 from networkx.algorithms.centrality.betweenness import _single_source_shortest_path_basic, _accumulate_basic, _rescale
 from tqdm import tqdm
+import networkx as nx
 
 
 def remove_degree1(graph_sub, node2neighbor):
@@ -97,31 +96,3 @@ def get_betweenness_mp(graph, node2neighbor):
     return betweenness
 
 
-if __name__ == '__main__':
-    for label in ['tech', 'industry', 'all']:
-        link_list = get_network(label=label)
-        graph = nx.Graph()
-        graph.add_edges_from(link_list)
-        node2neighbor = get_neighbor_unweighted(link_list)
-        betweenness = get_betweenness_mp(graph, node2neighbor)
-        with open('../data/output/betweenness_%s_1209.json' % label, 'w', encoding='UTF-8') as f:
-            json.dump(betweenness, f)
-
-    # with open('../data/test_2000.json', 'r') as f:
-    #     link_list = json.load(f)
-    #
-    # graph_test = nx.Graph()
-    # graph_test.add_edges_from(link_list)
-    # node2neighbor = get_neighbor_unweighted(link_list)
-    #
-    # start = time.time()
-    # clossness = get_betweenness_mp(graph_test, node2neighbor)
-    # print(time.time() - start)
-    #
-    # start = time.time()
-    # clossness_nx = nx.betweenness_centrality(graph_test)
-    # print(time.time() - start)
-    #
-    # for node, cc in clossness.items():
-    #     if abs(cc - clossness_nx[node]) > 1e-12:
-    #         print(node, cc, clossness_nx[node])

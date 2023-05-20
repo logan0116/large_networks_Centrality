@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 # @Time    : 2022/12/8 上午9:27
 # @Author  : liu yuhan
-# @FileName: sh_effect.py
+# @FileName: effect.py
 # @Software: PyCharm
 import numpy as np
 import networkx as nx
 import multiprocessing as mp
-
-from utils import *
+from collections import defaultdict
 
 
 def effect_single(p):
@@ -46,6 +45,17 @@ def effect_single(p):
     return i, effect
 
 
+def get_neighbor(link_list):
+    """
+    :return:
+    """
+    node2neighbor = defaultdict(dict)
+    for s, t in link_list:
+        node2neighbor[s][t] = 1
+        node2neighbor[t][s] = 1
+    return node2neighbor
+
+
 def effect_mp(label, link_list):
     """
     :param link_list:
@@ -68,10 +78,3 @@ def effect_mp(label, link_list):
     pool.close()
     return dict(effect)
 
-
-if __name__ == '__main__':
-    for label in ['tech', 'industry', 'all']:
-        link_list = get_network(label=label)
-        effect = effect_mp(label, link_list)
-        with open('../data/output/effect_%s_1209.json' % label, 'w', encoding='UTF-8') as f:
-            json.dump(effect, f)

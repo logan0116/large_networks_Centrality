@@ -8,10 +8,7 @@
 import networkx as nx
 import multiprocessing as mp
 from functools import partial
-from utils import *
 import numpy as np
-import time
-from tqdm import tqdm
 
 
 def remove_degree1(graph_sub, node2neighbor):
@@ -77,18 +74,3 @@ def get_clossness(graph, node2neighbor):
 
     return result
 
-
-if __name__ == '__main__':
-    for i in tqdm(range(500)):
-        graph_test = get_test_graph(2000, 2000)
-        link_list = list(graph_test.edges)
-        node2neighbor = get_neighbor_unweighted(link_list)
-
-        # prepare
-        clossness = get_clossness(graph_test, node2neighbor)
-
-        clossness_nx = nx.closeness_centrality(graph_test)
-
-        for node, cc in clossness.items():
-            if abs(cc - clossness_nx[node]) > 1e-12:
-                print(node, cc, clossness_nx[node])
